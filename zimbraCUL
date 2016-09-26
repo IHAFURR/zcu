@@ -44,8 +44,8 @@ my $createdCount = 0;
 my $existCount = 0;
 my $amount = 0;
 
-my $ldUrl = "ldap://mtest.kntu.net.ua:389";
-my $ldPass = "tFYehrRu";
+my $ldUrl = "";
+my $ldPass = "";
                                                                           
 # Student COS from Zimbra
 my $cosId = `su - zimbra -c 'zmprov gc student |grep zimbraId:'`;
@@ -87,8 +87,8 @@ while (my $line = <STUD_FILE>) {
 
 #password and domain for creatting and checking student info
 my $password = "Pass12344321";
-#    my $domain = "kntu.net.ua";
-my $domain = "mtest.kntu.net.ua";
+#    my $domain = "";
+my $domain = "";
 my $countr = "Україна";
 my $city = "Херсон";
 my $univers = "ХНТУ";
