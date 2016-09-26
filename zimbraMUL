@@ -1,0 +1,118 @@
+#!/usr/bin/perl -w
+
+use Time::Local;
+use Time::localtime;
+use IO::Select;
+use IPC::Open3;
+
+use strict;
+
+
+my $cosid = `su - zimbra -c 'zmprov - gc student |grep zimbraId:'`;
+    $cosid =~ s/zimbraId:\s*|\s*$//g;
+print "$cosid\n";
+my $count = 0;
+
+my @line = `su - zimbra -c 'zmprov -l gaa'`;
+
+
+	foreach my $k(@line)
+	    {
+		chomp($k);
+	print "$k :: \n";
+
+		my ($write, $read, $error);
+		my $pid = open3($write, $read, $error,
+			"su - zimbra -c 'zmprov ga $k zimbraCOSId'");
+
+	    my $selread = IO::Select->new();
+	    my $selerr = IO::Select->new();
+	    my ($print_err, $print_answer) = ('', '');
+
+	    $selread->add($read);
+	    $selerr->add($error);
+
+	    sysread($error, $print_err, 4096) if $selerr->can_read(0);
+	
+	    my @arr = ();
+	    while(sysread($read, $print_answer, 4096))
+		{
+		if($selread->can_read())
+		    {
+			$print_answer =~ s/\n//g;
+			push(@arr, $print_answer);
+		    }
+		}
+	my $answ = "";
+	if ($arr[0]) 
+	    {
+
+	    if(index($arr[0], "name") != -1)
+		{
+		foreach(@arr) 
+		    {
+			if(index($_, "zimbraCOSId") != -1)
+			    {
+				$answ = $_;
+				$answ =~ s/zimbraCOSId: //g;
+				print "$answ\n";
+				print "$answ :: $cosid\n";
+				if ($answ eq $cosid)
+				    {
+					print "Student :: $k\n";
+		my ($write, $read, $error);
+		my $pid = open3($write, $read, $error,
+			"su - zimbra -c 'zmprov ga $k facsimileTelephoneNumber'");
+
+	    my $selread = IO::Select->new();
+	    my $selerr = IO::Select->new();
+	    my ($print_err, $print_answer) = ('', '');
+
+	    $selread->add($read);
+	    $selerr->add($error);
+
+	    sysread($error, $print_err, 4096) if $selerr->can_read(0);
+	
+	    my @arr = ();
+	    while(sysread($read, $print_answer, 4096))
+		{
+		if($selread->can_read())
+		    {
+			$print_answer =~ s/\n//g;
+			push(@arr, $print_answer);
+		    }
+		}
+	my $Answ = "";
+	if ($arr[0]) 
+	    {
+
+	    if(index($arr[0], "name") != -1)
+		{
+		foreach(@arr) 
+		    {
+			if(index($_, "facsimileTelephoneNumber") != -1)
+			    {
+				$Answ = $_;
+				$Answ =~ s/facsimileTelephoneNumber: //g;
+				print "$Answ\n";
+				open (FL, ">>testAllZUid.csv") or die "$!\n";
+				print FL "$Answ;$k\n";
+				close FL;
+				$count++;
+		    }
+		    }
+		}
+		}
+	} else {  print "Admin account\n";}
+	    
+					    }
+			    }
+		    }
+		
+		}
+
+	    
+	    ($error, $answ) = ('', '');
+	    waitpid($pid,0);
+    	    }
+    print "Student Count: $count\n";
