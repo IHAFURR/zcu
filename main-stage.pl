@@ -13,23 +13,23 @@ use Lingua::Translit;
 
 # URL and Password for ldapsearch in zimbra, we can
 # still use "zmpov" but it take more time.
-my $LDAPURL = "";
-my $LDAPPASS = "";
-my $domain = "";
+my $LDAPURL = "ldap://mtest.kntu.net.ua:389";
+my $LDAPPASS = "tFYehrRu";
+my $domain = "mtest.kntu.net.ua";
 
 # File required for script
-my $edboFile = "";
-my $uidmailFile = "";
+my $edboFile = "10-users.csv";
+my $uidmailFile = "UIDMAIL.csv";
 
-my $university = "";
-my $title = "";
-my $country = "";
-my $city = "";
-my $password = "";
+my $university = "ХНТУ";
+my $title = "cтудент";
+my $country = "Україна";
+my $city = "Херсон";
+my $password = "pass-for-student-2017";
 
 # Settig a COS for new users
 # by default "student"
-my $newUsersCOS = "";
+my $newUsersCOS = "student";
 
 # script beggins there, so be care and make editing with caution
 my ($sec, $min, $hour, $day, $month, $year) = gmtime(time);
@@ -279,7 +279,7 @@ sub checkIfUserExist
     $tmpEmail = trim($tmpEmail);
     my ($write, $read, $error) = ('', '', '');
     my $pid = open3($write, $read, $error,
-        "su - zimbra -c \"ldapsearch -H $LDAPURL -w $LDAPPASS -D uid=zimbra,cn=admins,cn=zimbra -x -LLL \'(&(mail=$tmpEmail))\' facsimileTelephoneNumber\" |grep facsimileTelephoneNumber ");
+        "su - zimbra -c \"ldapsearch -H $LDAPURL -w $LDAPPASS -D uid=zimbra,cn=admins,cn=zimbra -x -LLL \'(&(mail=$tmpEmail))\' \"");
     my $selread = IO::Select->new();
     my $selerror = IO::Select->new();
     my ($print_err, $print_answer) = ('', '');
@@ -322,7 +322,7 @@ sub checkUserUIDZimbra
     my $answ = "";
     my ($write, $read, $error) = ('', '', '');
     my $pid = open3($write, $read, $error,
-        "su - zimbra -c \"ldapsearch -H $LDAPURL -w $LDAPPASS -D uid=zimbra,cn=admins,cn=zimbra -x -LLL \'(&(mail=$tmpEmail))\'\"");
+        "su - zimbra -c \"ldapsearch -H $LDAPURL -w $LDAPPASS -D uid=zimbra,cn=admins,cn=zimbra -x -LLL \'(&(mail=$tmpEmail))\' facsimileTelephoneNumber\" |grep facsimileTelephoneNumber ");
     my $selread = IO::Select->new();
     my $selerror = IO::Select->new();
     my ($print_err, $print_answer) = ('', '');
@@ -366,7 +366,7 @@ sub checkUserUIDZimbra
     {
         printLOG("User, $tmpEmail, has - facsimileTelephoneNumber: $answ");
         waitpid($pid, 0);
-        return trim($print_answer);
+        return trim($answ);
     }
 }
 
