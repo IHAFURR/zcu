@@ -509,6 +509,5 @@ sub createNewMail
             return $tr_mail;
         }
     }
-
     return $tr_mail;
 }
