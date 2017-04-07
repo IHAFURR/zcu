@@ -205,8 +205,10 @@ sub createMailUIDHash {
             $amountOfUID++;
         }
     }
+    
     printLOG("##########  createMailUIDHash  ########");
     printLOG("Hash created: $amountOfUID,  Users skiped: $amountOFDuplicated");
+    
     return %tempHash;
 }
 
